@@ -1,0 +1,10 @@
+credentials
+
+.gemini/
+__pycache__/
+*.pyc
+.system_generated/
+brain/
+implementation_plan.md
+task.md
+walkthrough.md

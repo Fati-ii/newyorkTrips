@@ -124,7 +124,7 @@ if section == "Overview":
         best_model = metrics_df.iloc[0]
         
         c1, c2, c3 = st.columns(3)
-        with c1: custom_metric("Best Model", best_model['model_name'], is_best=True)
+        with c1: custom_metric("Best Model", str(best_model['model_name']), is_best=True)
         with c2: custom_metric("Minimum RMSE", f"{float(best_model['rmse']):.4f}")
         with c3: custom_metric("Best R2 Score", f"{float(best_model['r2']):.4f}")
 
@@ -162,7 +162,7 @@ if section == "Overview":
                                                 zoom=13, height=200)
                     fig_teaser.update_traces(marker=dict(size=20, color='#FF4B4B'))
                     fig_teaser.update_layout(margin={"r":0,"t":0,"l":0,"b":0}, showlegend=False)
-                    st.plotly_chart(fig_teaser, use_container_width=True)
+                    st.plotly_chart(fig_teaser, width='stretch')
                 else:
                     st.info("📍 Coordinates missing in Parquet.")
 
@@ -173,8 +173,8 @@ elif section == "Time Analytics":
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Trips Volume per Hour")
-        h_col = 'nb_trips' if 'nb_trips' in hour_df.columns else ('count' if 'count' in hour_df.columns else None)
-        hour_col = 'pickup_hour' if 'pickup_hour' in hour_df.columns else ('hour' if 'hour' in hour_df.columns else None)
+        h_col = next((c for c in hour_df.columns if c.lower() in ['nb_trips', 'count', 'num_trips', 'nb_trip']), None)
+        hour_col = next((c for c in hour_df.columns if c.lower() in ['pickup_hour', 'hour', 'hr']), None)
 
         if not hour_df.empty and hour_col and h_col:
             fig_hour = px.bar(hour_df.sort_values(by=hour_col), x=hour_col, y=h_col, 
@@ -218,7 +218,7 @@ elif section == "Heatmap Zones":
                                           color_continuous_scale='Reds',
                                           zoom=10.5, height=500)
                 fig_map.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-                st.plotly_chart(fig_map, use_container_width=True)
+                st.plotly_chart(fig_map, width='stretch')
             else:
                 st.warning("Coordinates missing.")
     else:
@@ -245,7 +245,7 @@ elif section == "Predictions":
                                    labels={'total_amount': 'Actual Total Amount', 'prediction': 'Predicted Amount'},
                                    template="plotly_white")
             fig_scatter.update_traces(marker=dict(color='#FFB800'))
-            st.plotly_chart(fig_scatter, use_container_width=True)
+            st.plotly_chart(fig_scatter, width='stretch')
 
         with col2:
             st.subheader("Prediction Error Distribution")
@@ -254,7 +254,7 @@ elif section == "Predictions":
                                   labels={'error': 'Residual (Predicted - Actual)'},
                                   template="plotly_white")
             fig_hist.update_traces(marker_color='#FF4B4B')
-            st.plotly_chart(fig_hist, use_container_width=True)
+            st.plotly_chart(fig_hist, width='stretch')
         
         st.markdown("###  Quick Stats")
         mae = sample_df['error'].abs().mean()
